@@ -1,11 +1,15 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppData with ChangeNotifier {
   // App status
   String colorPlayer = "Verd";
   String colorOpponent = "Taronja";
+  int tamany = 9;   //o 15
+  int bombes = 5;  //o 10, 20
 
   List<List<String>> board = [];
   bool gameIsOver = false;
@@ -15,50 +19,74 @@ class AppData with ChangeNotifier {
   ui.Image? imageOpponent;
   bool imagesReady = false;
 
-  void resetGame() {
-    board = [
-      ['-', '-', '-'],
-      ['-', '-', '-'],
-      ['-', '-', '-'],
-    ];
-    gameIsOver = false;
-    gameWinner = '-';
+ void resetGame() {
+    board.clear();
+    board = List.generate(tamany, (_) => List.filled(tamany, '---'));
+    randomBombs();
+    checkBombs();
+    printBoard(); // Agregamos esta función para imprimir el tablero
   }
+
+  // Generar bombas de manera aleatoria
+  void randomBombs() {
+    final Random r = Random();
+    for (int b = 0; b < bombes; b++) {
+      int fila, casilla;
+      do {
+        fila = r.nextInt(tamany);
+        casilla = r.nextInt(tamany);
+      } while (board[fila][casilla] == '-b-');
+      board[fila][casilla] = '-b-';
+    }
+  }
+
+  // Verificar bombas alrededor de cada casilla
+  void checkBombs() {
+    for (int fila = 0; fila < tamany; fila++) {
+      for (int casilla = 0; casilla < tamany; casilla++) {
+        if (board[fila][casilla] != '-b-') {
+          int numBombes = 0;
+          for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+              if (i == 0 && j == 0) continue; // Ignorar la casilla actual
+              int nuevaFila = fila + i;
+              int nuevaCasilla = casilla + j;
+              if (nuevaFila >= 0 && nuevaFila < tamany && nuevaCasilla >= 0 && nuevaCasilla < tamany) {
+                if (board[nuevaFila][nuevaCasilla] == '-b-') {
+                  numBombes++;
+                }
+              }
+            }
+          }
+          board[fila][casilla] = '-$numBombes-';
+        }
+      }
+    }
+  }
+
+  void printBoard() {
+    for (int fila = 0; fila < tamany; fila++) {
+        print(board[fila]);
+    }
+  }
+
+
+
+
+
 
   // Fa una jugada, primer el jugador després la maquina
   void playMove(int row, int col) {
     if (board[row][col] == '-') {
       board[row][col] = 'X';
       checkGameWinner();
-      if (gameWinner == '-') {
-        machinePlay();
-      }
     }
-  }
-
-  // Fa una jugada de la màquina, només busca la primera posició lliure
-  void machinePlay() {
-    bool moveMade = false;
-
-    // Buscar una casella lliure '-'
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
-        if (board[i][j] == '-') {
-          board[i][j] = 'O';
-          moveMade = true;
-          break;
-        }
-      }
-      if (moveMade) break;
-    }
-
-    checkGameWinner();
   }
 
   // Comprova si el joc ja té un tres en ratlla
   // No comprova la situació d'empat
   void checkGameWinner() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
       // Comprovar files
       if (board[i][0] == board[i][1] &&
           board[i][1] == board[i][2] &&

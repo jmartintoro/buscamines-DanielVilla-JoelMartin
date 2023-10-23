@@ -16,24 +16,30 @@ class WidgetTresRatllaPainter extends CustomPainter {
       ..strokeWidth = 5.0;
 
     // Definim els punts on es creuaran les línies verticals
-    final double firstVertical = size.width / 3;
-    final double secondVertical = 2 * size.width / 3;
+    final double firstVertical = size.width / 4;
+    final double secondVertical = 2 * size.width / 4;
+    final double thirdVertical = 3 * size.width / 4;
 
     // Dibuixem les línies verticals
     canvas.drawLine(
         Offset(firstVertical, 0), Offset(firstVertical, size.height), paint);
     canvas.drawLine(
         Offset(secondVertical, 0), Offset(secondVertical, size.height), paint);
+    canvas.drawLine(
+        Offset(thirdVertical, 0), Offset(thirdVertical, size.height), paint);
 
     // Definim els punts on es creuaran les línies horitzontals
-    final double firstHorizontal = size.height / 3;
-    final double secondHorizontal = 2 * size.height / 3;
+    final double firstHorizontal = size.height / 4;
+    final double secondHorizontal = 2 * size.height / 4;
+    final double thirdHorizontal = 3 * size.height / 4;
 
     // Dibuixem les línies horitzontals
     canvas.drawLine(
         Offset(0, firstHorizontal), Offset(size.width, firstHorizontal), paint);
     canvas.drawLine(Offset(0, secondHorizontal),
         Offset(size.width, secondHorizontal), paint);
+    canvas.drawLine(Offset(0, thirdHorizontal),
+        Offset(size.width, thirdHorizontal), paint);
   }
 
   // Dibuixa la imatge centrada a una casella del taulell
@@ -98,11 +104,11 @@ class WidgetTresRatllaPainter extends CustomPainter {
   // Dibuixa el taulell de joc (creus i rodones)
   void drawBoardStatus(Canvas canvas, Size size) {
     // Dibuixar 'X' i 'O' del tauler
-    double cellWidth = size.width / 3;
-    double cellHeight = size.height / 3;
+    double cellWidth = size.width / 4;
+    double cellHeight = size.height / 4;
 
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++) {
+    for (int i = 0; i < 4; i++) {                                       ///////////////////
+      for (int j = 0; j < 4; j++) {
         if (appData.board[i][j] == 'X') {
           // Dibuixar una X amb el color del jugador
           Color color = Colors.blue;

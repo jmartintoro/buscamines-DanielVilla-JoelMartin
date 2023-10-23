@@ -1,6 +1,5 @@
+import 'package:cupertino_base/lobby.dart';
 import 'package:flutter/cupertino.dart';
-import 'layout_intro.dart';
-import 'layout_settings.dart';
 import 'layout_play.dart';
 
 // Main application widget
@@ -20,10 +19,9 @@ class AppState extends State<App> {
     return CupertinoApp(
       debugShowCheckedModeBanner: false,
       theme: const CupertinoThemeData(brightness: Brightness.light),
-      home: const LayoutIntro(),
+      home: const Lobby(),
       routes: {
-        'intro': (context) => const LayoutIntro(),
-        'settings': (context) => const LayoutSettings(),
+        'intro': (context) => const Lobby(),
         'play': (context) => const LayoutPlay(),
       },
     );
