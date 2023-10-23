@@ -15,31 +15,16 @@ class WidgetTresRatllaPainter extends CustomPainter {
       ..color = Colors.black
       ..strokeWidth = 5.0;
 
-    // Definim els punts on es creuaran les línies verticals
-    final double firstVertical = size.width / 4;
-    final double secondVertical = 2 * size.width / 4;
-    final double thirdVertical = 3 * size.width / 4;
-
-    // Dibuixem les línies verticals
-    canvas.drawLine(
-        Offset(firstVertical, 0), Offset(firstVertical, size.height), paint);
-    canvas.drawLine(
-        Offset(secondVertical, 0), Offset(secondVertical, size.height), paint);
-    canvas.drawLine(
-        Offset(thirdVertical, 0), Offset(thirdVertical, size.height), paint);
-
-    // Definim els punts on es creuaran les línies horitzontals
-    final double firstHorizontal = size.height / 4;
-    final double secondHorizontal = 2 * size.height / 4;
-    final double thirdHorizontal = 3 * size.height / 4;
-
-    // Dibuixem les línies horitzontals
-    canvas.drawLine(
-        Offset(0, firstHorizontal), Offset(size.width, firstHorizontal), paint);
-    canvas.drawLine(Offset(0, secondHorizontal),
-        Offset(size.width, secondHorizontal), paint);
-    canvas.drawLine(Offset(0, thirdHorizontal),
-        Offset(size.width, thirdHorizontal), paint);
+    // Definim els punts on es creuaran les línies verticals y horitzontals
+    for (int l = 1; l < appData.tamany; l++) {
+      final double lineaHorizontal = l * size.height / appData.tamany;
+      final double lineaVertical = l * size.width / appData.tamany;
+      //Dibuixem la linea
+      canvas.drawLine(
+       Offset(0, lineaHorizontal), Offset(size.width, lineaHorizontal), paint);
+      canvas.drawLine(
+        Offset(lineaVertical, 0), Offset(lineaVertical, size.height), paint);
+    }
   }
 
   // Dibuixa la imatge centrada a una casella del taulell
@@ -73,43 +58,51 @@ class WidgetTresRatllaPainter extends CustomPainter {
   }
 
   // Dibuia una creu centrada a una casella del taulell
-  void drawCross(Canvas canvas, double x0, double y0, double x1, double y1,
-      Color color, double strokeWidth) {
-    Paint paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth;
+  void drawNumber(Canvas canvas, double x, double y, String number, Color color, double strokeWidth) {
+    
+    TextSpan span = TextSpan(
+      text: number.toString(),
+      style: TextStyle(
+        color: color,
+        fontSize: 50.0, // Tamaño del número
+        fontWeight: FontWeight.bold,
+      ),
+    );
 
-    canvas.drawLine(
-      Offset(x0, y0),
-      Offset(x1, y1),
-      paint,
+    TextPainter tp = TextPainter(
+      text: span,
+      textDirection: TextDirection.ltr,
+      textAlign: TextAlign.center,
     );
-    canvas.drawLine(
-      Offset(x1, y0),
-      Offset(x0, y1),
-      paint,
-    );
+
+    tp.layout();
+    tp.paint(canvas, Offset(x - tp.width, y - tp.height));
+    
   }
 
   // Dibuixa un cercle centrat a una casella del taulell
-  void drawCircle(Canvas canvas, double x, double y, double radius, Color color,
+  void drawBomb(Canvas canvas, double x, double y, double radius, Color color,
       double strokeWidth) {
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..color = color
       ..strokeWidth = strokeWidth;
+    final paint2 = Paint()
+      ..style = PaintingStyle.fill
+      ..color = color;
     canvas.drawCircle(Offset(x, y), radius, paint);
+    canvas.drawCircle(Offset(x, y), radius/2, paint2);
   }
 
   // Dibuixa el taulell de joc (creus i rodones)
   void drawBoardStatus(Canvas canvas, Size size) {
     // Dibuixar 'X' i 'O' del tauler
-    double cellWidth = size.width / 4;
-    double cellHeight = size.height / 4;
+    double cellWidth = size.width / appData.tamany;
+    double cellHeight = size.height / appData.tamany;
 
-    for (int i = 0; i < 4; i++) {                                       ///////////////////
-      for (int j = 0; j < 4; j++) {
-        if (appData.board[i][j] == 'X') {
+    for (int i = 0; i < appData.tamany; i++) {                                       ///////////////////
+      for (int j = 0; j < appData.tamany; j++) {
+        if (appData.board[i][j][1] != 'b') {
           // Dibuixar una X amb el color del jugador
           Color color = Colors.blue;
           switch (appData.colorPlayer) {
@@ -128,10 +121,11 @@ class WidgetTresRatllaPainter extends CustomPainter {
           double y0 = i * cellHeight;
           double x1 = (j + 1) * cellWidth;
           double y1 = (i + 1) * cellHeight;
+          double cX = x0 + (x1 - x0) / 2;
+          double cY = y0 + (y1 - y0);
 
-          drawImage(canvas, appData.imagePlayer!, x0, y0, x1, y1);
-          drawCross(canvas, x0, y0, x1, y1, color, 5.0);
-        } else if (appData.board[i][j] == 'O') {
+          drawNumber(canvas, cX, cY, appData.board[i][j][1], color, 5.0);
+        } else if (appData.board[i][j][1] == 'b') {
           // Dibuixar una O amb el color de l'oponent
           Color color = Colors.blue;
           switch (appData.colorOpponent) {
@@ -154,8 +148,7 @@ class WidgetTresRatllaPainter extends CustomPainter {
           double cY = y0 + (y1 - y0) / 2;
           double radius = (min(cellWidth, cellHeight) / 2) - 5;
 
-          drawImage(canvas, appData.imageOpponent!, x0, y0, x1, y1);
-          drawCircle(canvas, cX, cY, radius, color, 5.0);
+          drawBomb(canvas, cX, cY, radius, color, 5.0);
         }
       }
     }
