@@ -8,8 +8,8 @@ class AppData with ChangeNotifier {
   // App status
   String colorPlayer = "Verd";
   String colorOpponent = "Taronja";
-  int tamany = 9;   //o 15
-  int bombes = 5;  //o 10, 20
+  int tamany = 9; //o 15
+  int bombes = 5; //o 10, 20
 
   List<List<String>> board = [];
   bool gameIsOver = false;
@@ -19,10 +19,10 @@ class AppData with ChangeNotifier {
   ui.Image? imageOpponent;
   bool imagesReady = false;
 
- void resetGame() {
-    board.clear();
-    board = List.generate(tamany, (_) => List.filled(tamany, '---'));
-    randomBombs();
+  void resetGame() {
+    board.clear();                                                              //1r '-': hay (f) o no (-) puesta bandera
+    board = List.generate(tamany, (_) => List.filled(tamany, '---'));           //2n '-': bomba (b) o numero de bombas alrededor (numero)
+    randomBombs();                                                              //3r '-': destapado (s) o no (-)
     checkBombs();
     printBoard(); // Agregamos esta función para imprimir el tablero
   }
@@ -35,8 +35,8 @@ class AppData with ChangeNotifier {
       do {
         fila = r.nextInt(tamany);
         casilla = r.nextInt(tamany);
-      } while (board[fila][casilla] == '-b-');
-      board[fila][casilla] = '-b-';
+      } while (board[fila][casilla][1] == 'b');
+      board[fila][casilla] ='${board[fila][casilla][0]}b${board[fila][casilla][2]}';
     }
   }
 
@@ -44,21 +44,24 @@ class AppData with ChangeNotifier {
   void checkBombs() {
     for (int fila = 0; fila < tamany; fila++) {
       for (int casilla = 0; casilla < tamany; casilla++) {
-        if (board[fila][casilla] != '-b-') {
+        if (board[fila][casilla][1] != 'b') {
           int numBombes = 0;
           for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
               if (i == 0 && j == 0) continue; // Ignorar la casilla actual
               int nuevaFila = fila + i;
               int nuevaCasilla = casilla + j;
-              if (nuevaFila >= 0 && nuevaFila < tamany && nuevaCasilla >= 0 && nuevaCasilla < tamany) {
-                if (board[nuevaFila][nuevaCasilla] == '-b-') {
+              if (nuevaFila >= 0 &&
+                  nuevaFila < tamany &&
+                  nuevaCasilla >= 0 &&
+                  nuevaCasilla < tamany) {
+                if (board[nuevaFila][nuevaCasilla][1] == 'b') {
                   numBombes++;
                 }
               }
             }
           }
-          board[fila][casilla] = '-$numBombes-';
+          board[fila][casilla] = '${board[fila][casilla][0]}$numBombes${board[fila][casilla][2]}';
         }
       }
     }
@@ -66,14 +69,9 @@ class AppData with ChangeNotifier {
 
   void printBoard() {
     for (int fila = 0; fila < tamany; fila++) {
-        print(board[fila]);
+      print(board[fila]);
     }
   }
-
-
-
-
-
 
   // Fa una jugada, primer el jugador després la maquina
   void playMove(int row, int col) {

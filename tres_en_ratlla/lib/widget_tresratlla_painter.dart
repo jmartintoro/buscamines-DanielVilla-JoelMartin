@@ -20,10 +20,10 @@ class WidgetTresRatllaPainter extends CustomPainter {
       final double lineaHorizontal = l * size.height / appData.tamany;
       final double lineaVertical = l * size.width / appData.tamany;
       //Dibuixem la linea
+      canvas.drawLine(Offset(0, lineaHorizontal),
+          Offset(size.width, lineaHorizontal), paint);
       canvas.drawLine(
-       Offset(0, lineaHorizontal), Offset(size.width, lineaHorizontal), paint);
-      canvas.drawLine(
-        Offset(lineaVertical, 0), Offset(lineaVertical, size.height), paint);
+          Offset(lineaVertical, 0), Offset(lineaVertical, size.height), paint);
     }
   }
 
@@ -58,8 +58,8 @@ class WidgetTresRatllaPainter extends CustomPainter {
   }
 
   // Dibuia una creu centrada a una casella del taulell
-  void drawNumber(Canvas canvas, double x, double y, String number, Color color, double strokeWidth) {
-    
+  void drawNumber(Canvas canvas, double x, double y, String number, Color color,
+      double strokeWidth) {
     TextSpan span = TextSpan(
       text: number.toString(),
       style: TextStyle(
@@ -77,7 +77,6 @@ class WidgetTresRatllaPainter extends CustomPainter {
 
     tp.layout();
     tp.paint(canvas, Offset(x - tp.width, y - tp.height));
-    
   }
 
   // Dibuixa un cercle centrat a una casella del taulell
@@ -91,7 +90,35 @@ class WidgetTresRatllaPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = color;
     canvas.drawCircle(Offset(x, y), radius, paint);
-    canvas.drawCircle(Offset(x, y), radius/2, paint2);
+    canvas.drawCircle(Offset(x, y), radius / 2, paint2);
+  }
+
+  //Dibuixa bandera
+  void drawBandera(Canvas canvas, double x, double y, double width,
+      double height, Color color, double strokeWidth) {
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..color = color
+      ..strokeWidth = strokeWidth;
+    final paint2 = Paint()
+      ..style = PaintingStyle.fill
+      ..color = color;
+    final flagHeight = height * 0.6;
+    final flagWidth = width * 0.6;
+
+    // Dibuja el asta de la bandera
+    canvas.drawLine(Offset(x, y), Offset(x, y + flagHeight), paint);
+
+    // Dibuja el cuerpo de la bandera
+    final flagPath = Path()
+      ..moveTo(x, y)
+      ..lineTo(x + flagWidth/2, y)
+      ..lineTo(x, y + flagHeight/2)
+      ..lineTo(x - flagWidth/2, y)
+      ..lineTo(x, y+ flagHeight/2)
+      ..close();
+
+    canvas.drawPath(flagPath, paint2);
   }
 
   // Dibuixa el taulell de joc (creus i rodones)
@@ -100,22 +127,12 @@ class WidgetTresRatllaPainter extends CustomPainter {
     double cellWidth = size.width / appData.tamany;
     double cellHeight = size.height / appData.tamany;
 
-    for (int i = 0; i < appData.tamany; i++) {                                       ///////////////////
+    for (int i = 0; i < appData.tamany; i++) {
+      ///////////////////
       for (int j = 0; j < appData.tamany; j++) {
-        if (appData.board[i][j][1] != 'b') {
+        if (appData.board[i][j][0] != '1' && appData.board[i][j][1] != 'b' && appData.board[i][j][2] != '-') {
           // Dibuixar una X amb el color del jugador
           Color color = Colors.blue;
-          switch (appData.colorPlayer) {
-            case "Blau":
-              color = Colors.blue;
-              break;
-            case "Verd":
-              color = Colors.green;
-              break;
-            case "Gris":
-              color = Colors.grey;
-              break;
-          }
 
           double x0 = j * cellWidth;
           double y0 = i * cellHeight;
@@ -125,20 +142,10 @@ class WidgetTresRatllaPainter extends CustomPainter {
           double cY = y0 + (y1 - y0);
 
           drawNumber(canvas, cX, cY, appData.board[i][j][1], color, 5.0);
-        } else if (appData.board[i][j][1] == 'b') {
+        } else if (appData.board[i][j][0] != '1' &&
+            appData.board[i][j][1] == 'b' && appData.board[i][j][2] != '-') {
           // Dibuixar una O amb el color de l'oponent
-          Color color = Colors.blue;
-          switch (appData.colorOpponent) {
-            case "Vermell":
-              color = Colors.red;
-              break;
-            case "Taronja":
-              color = Colors.orange;
-              break;
-            case "Marró":
-              color = Colors.brown;
-              break;
-          }
+          Color color = Colors.red;
 
           double x0 = j * cellWidth;
           double y0 = i * cellHeight;
@@ -149,6 +156,17 @@ class WidgetTresRatllaPainter extends CustomPainter {
           double radius = (min(cellWidth, cellHeight) / 2) - 5;
 
           drawBomb(canvas, cX, cY, radius, color, 5.0);
+        } else if (appData.board[i][j][0] == 'f' && appData.board[i][j][2] == '-') {
+          Color color = Colors.red;
+
+          double x0 = j * cellWidth;
+          double y0 = i * cellHeight;
+          double x1 = (j + 1) * cellWidth;
+          double y1 = (i + 1) * cellHeight;
+          double cX = x0 + (x1 - x0) / 2;
+          double cY = y0 + (y1 - y0) / 5;
+
+          drawBandera(canvas, cX, cY, cellWidth/1.5, cellHeight ,color, 5.0);
         }
       }
     }
