@@ -30,9 +30,9 @@ class WidgetTresRatllaState extends State<WidgetTresRatlla> {
     return GestureDetector(
       onTapUp: (TapUpDetails details) {
         final int row =
-            (details.localPosition.dy / (context.size!.height / 4)).floor();
+            (details.localPosition.dy / (context.size!.height / appData.tamany)).floor();
         final int col =
-            (details.localPosition.dx / (context.size!.width / 4)).floor();   ///////////////////////////////////////////////////////////////
+            (details.localPosition.dx / (context.size!.width / appData.tamany)).floor();   ///////////////////////////////////////////////////////////////
 
         appData.playMove(row, col);
         setState(() {}); // Actualitza la vista
@@ -53,13 +53,28 @@ class WidgetTresRatllaState extends State<WidgetTresRatlla> {
               return GestureDetector(
                 onTapUp: (TapUpDetails details) {
                   final int row =
-                      (details.localPosition.dy / (context.size!.height / 4)) ///////////////////////////////////////////////////
+                      (details.localPosition.dy / (context.size!.height / appData.tamany)) ///////////////////////////////////////////////////
                           .floor();
                   final int col =
-                      (details.localPosition.dx / (context.size!.width / 4))
+                      (details.localPosition.dx / (context.size!.width / appData.tamany))
                           .floor();
+                  if (appData.board[row][col][0] != "f") {
+                    appData.playMove(row, col);
+                  }
+                  setState(() {}); // Actualitza la vista
+                },
+                onDoubleTapDown: (TapDownDetails details) {
 
-                  appData.playMove(row, col);
+                  final int row = (details.localPosition.dy  / (context.size!.height / appData.tamany)).floor();
+                  final int col = (details.localPosition.dx  / (context.size!.width / appData.tamany)).floor();
+
+                  if (appData.board[row][col][2] != 's') {
+                    if (appData.board[row][col][0] == "f") {
+                      appData.board[row][col] = '-${appData.board[row][col][1]}${appData.board[row][col][2]}';
+                    } else if (appData.board[row][col][0] == "-") {
+                      appData.board[row][col] = 'f${appData.board[row][col][1]}${appData.board[row][col][2]}';
+                    }
+                  }
                   setState(() {}); // Actualitza la vista
                 },
                 child: SizedBox(

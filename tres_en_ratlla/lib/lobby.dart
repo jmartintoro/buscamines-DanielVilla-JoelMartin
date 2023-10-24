@@ -46,6 +46,7 @@ class Lobby extends StatelessWidget {
         GestureDetector(
           onTap: () {
             appData.resetGame();
+                appData.gameIsOver = false;
                 Navigator.of(context).pushNamed('play');
           },
           child: Container(

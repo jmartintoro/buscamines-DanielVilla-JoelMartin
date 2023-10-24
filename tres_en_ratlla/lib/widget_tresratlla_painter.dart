@@ -174,7 +174,7 @@ class WidgetTresRatllaPainter extends CustomPainter {
 
   // Dibuixa el missatge de joc acabat
   void drawGameOver(Canvas canvas, Size size) {
-    String message = "El joc ha acabat. Ha guanyat ${appData.gameWinner}!";
+    String message = "Has EXPLOTAT!";
 
     const textStyle = TextStyle(
       color: Colors.black,
@@ -214,7 +214,7 @@ class WidgetTresRatllaPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     drawBoardLines(canvas, size);
     drawBoardStatus(canvas, size);
-    if (appData.gameWinner != '-') {
+    if (appData.gameIsOver) {
       drawGameOver(canvas, size);
     }
   }

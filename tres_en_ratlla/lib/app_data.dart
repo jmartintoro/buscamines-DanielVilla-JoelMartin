@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:cupertino_base/widget_tresratlla_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -75,11 +76,51 @@ class AppData with ChangeNotifier {
 
   // Fa una jugada, primer el jugador després la maquina
   void playMove(int row, int col) {
-    if (board[row][col] == '-') {
-      board[row][col] = 'X';
-      checkGameWinner();
+    if (board[row][col][2] == '-') {
+      board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
+      if (board[row][col][1] == 'b'){
+        // funcion que destape todas las bombas 
+        showBombs();
+        // llamar funcion game over
+        gameIsOver = true;
+      }
+      if (board[row][col][1] != 'b'){
+        checkAround(row, col);
+      } //////////////// No esta bien implementado
+      //checkGameWinner();
     }
   }
+
+  void showBombs() {
+    for (int fila = 0; fila < tamany; fila++) {
+      for (int casilla = 0; casilla < tamany; casilla++) {
+        if (board[fila][casilla][1] == 'b') {
+          board[fila][casilla] = '${board[fila][casilla][0]}${board[fila][casilla][1]}s';
+        } else if (board[fila][casilla][2] != 's') {
+          board[fila][casilla] = '${board[fila][casilla][0]} s';
+        }
+      }
+    }
+  }
+
+  void checkAround(int row, int col) {
+    if (row < 0 || row >= tamany || col < 0 || col >= tamany || board[row][col][1] == 's' || board[row][col][0] != '0') {
+        return;  // No hagas nada si la casilla ya se reveló o está fuera de los límites o no contiene un '0'
+    }
+
+    board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
+
+    // Llamar recursivamente a las casillas adyacentes
+    print('checkAround(row - 1, col);');
+    checkAround(row - 1, col);
+    print('checkAround(row + 1, col);');
+    checkAround(row + 1, col);
+    print('checkAround(row, col - 1);');
+    checkAround(row, col - 1);
+    print('checkAround(row, col + 1);');
+    checkAround(row, col + 1);
+  }
+
 
   // Comprova si el joc ja té un tres en ratlla
   // No comprova la situació d'empat
