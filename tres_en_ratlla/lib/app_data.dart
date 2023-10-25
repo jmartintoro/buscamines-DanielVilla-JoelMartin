@@ -12,6 +12,8 @@ class AppData with ChangeNotifier {
   int tamany = 9; //o 15
   int bombes = 5; //o 10, 20
 
+  int flags = 0;
+
   List<List<String>> board = [];
   bool gameIsOver = false;
   String gameWinner = '-';
@@ -26,6 +28,7 @@ class AppData with ChangeNotifier {
     randomBombs();                                                              //3r '-': destapado (s) o no (-)
     checkBombs();
     printBoard(); // Agregamos esta función para imprimir el tablero
+    notifyListeners(); // Notificar cambios después de resetear el juego
   }
 
   // Generar bombas de manera aleatoria
@@ -39,6 +42,7 @@ class AppData with ChangeNotifier {
       } while (board[fila][casilla][1] == 'b');
       board[fila][casilla] ='${board[fila][casilla][0]}b${board[fila][casilla][2]}';
     }
+    notifyListeners(); // Notificar cambios después de colocar bombas
   }
 
   // Verificar bombas alrededor de cada casilla
@@ -66,6 +70,7 @@ class AppData with ChangeNotifier {
         }
       }
     }
+    notifyListeners(); // Notificar cambios después de verificar bombas
   }
 
   void printBoard() {
@@ -88,6 +93,7 @@ class AppData with ChangeNotifier {
         checkAround(row, col);
       } //////////////// No esta bien implementado
       //checkGameWinner();
+      notifyListeners(); // Notificar cambios después de realizar una jugada
     }
   }
 
@@ -100,6 +106,19 @@ class AppData with ChangeNotifier {
           board[fila][casilla] = '${board[fila][casilla][0]} s';
         }
       }
+    }
+  }
+
+  void flagator(int row, int col) {
+    if (board[row][col][2] != 's') {
+      if (board[row][col][0] == "f") {
+        board[row][col] = '-${board[row][col][1]}${board[row][col][2]}';
+        flags--;
+      } else if (board[row][col][0] == "-") {
+        board[row][col] = 'f${board[row][col][1]}${board[row][col][2]}';
+        flags++;
+      }
+      notifyListeners();
     }
   }
 
