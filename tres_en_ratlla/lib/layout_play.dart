@@ -1,14 +1,51 @@
+import 'dart:async';
 import 'package:cupertino_base/app_data.dart';
+import 'package:cupertino_base/widget_tresratlla.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'widget_tresratlla.dart';
 
-class LayoutPlay extends StatelessWidget {
+class LayoutPlay extends StatefulWidget {
   const LayoutPlay({Key? key}) : super(key: key);
+
+  @override
+  _LayoutPlayState createState() => _LayoutPlayState();
+}
+
+class _LayoutPlayState extends State<LayoutPlay> {
+  late Timer _timer;
+  String chrono = '00';
+
+  @override
+  void initState() {
+    super.initState();
+
+    final appData = context.read<AppData>(); // Usar context.read para acceder a AppData
+
+    // Iniciar el cronómetro
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (!appData.gameIsOver) {
+        // Incrementar el tiempo en un segundo
+        int seconds = int.parse(chrono) + 1;
+        setState(() {
+          chrono = seconds.toString().padLeft(2, '0');
+        });
+
+        // Actualizar la variable 'chrono' en AppData
+        appData.updateChrono(chrono);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Detener el cronómetro al salir
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final appData = context.watch<AppData>();
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Row(
@@ -22,6 +59,10 @@ class LayoutPlay extends StatelessWidget {
             Text(
               'Partida',
               style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 0, 0, 0)),
+            ),
+            Text(
+              '   ${chrono}\'',
+              style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 120, 220, 25)),
             ),
           ],
         ),

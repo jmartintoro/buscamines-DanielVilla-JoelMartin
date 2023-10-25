@@ -13,6 +13,7 @@ class AppData with ChangeNotifier {
   int bombes = 5; //o 10, 20
 
   int flags = 0;
+  String chrono = '00';
 
   List<List<String>> board = [];
   bool gameIsOver = false;
@@ -120,6 +121,11 @@ class AppData with ChangeNotifier {
       }
       notifyListeners();
     }
+  }
+
+  void updateChrono(String newChrono) {
+    chrono = newChrono;
+    notifyListeners();
   }
 
   void checkAround(int row, int col) {
