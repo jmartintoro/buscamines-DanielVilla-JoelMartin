@@ -1,16 +1,13 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui' as ui;
 import 'package:cupertino_base/widget_tresratlla_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AppData with ChangeNotifier {
-  // App status
-  String colorPlayer = "Verd";
-  String colorOpponent = "Taronja";
   int tamany = 9; //o 15
   int bombes = 5; //o 10, 20
+  bool nightmode = true;
 
   int flags = 0;
   String chrono = '00';
@@ -18,10 +15,6 @@ class AppData with ChangeNotifier {
   List<List<String>> board = [];
   bool gameIsOver = false;
   String gameWinner = '-';
-
-  ui.Image? imagePlayer;
-  ui.Image? imageOpponent;
-  bool imagesReady = false;
 
   void resetGame() {
     board.clear();                                                              //1r '-': hay (f) o no (-) puesta bandera
@@ -91,8 +84,15 @@ class AppData with ChangeNotifier {
         gameIsOver = true;
       }
       if (board[row][col][1] != 'b'){
-        checkAround(row, col);
-      } //////////////// No esta bien implementado
+        checkAround(row, col+1);  //Derecha
+        checkAround(row, col-1);  //Izquierda
+        checkAround(row-1, col);  //Arriba
+        checkAround(row-1, col+1);  //Arriba Derecha
+        checkAround(row-1, col-1);  //Arriba Izquierda
+        checkAround(row+1, col);  //Abajo
+        checkAround(row+1, col+1);  //Abajo Derecha
+        checkAround(row+1, col-1);  //Abajo Izquierda
+      } 
       //checkGameWinner();
       notifyListeners(); // Notificar cambios después de realizar una jugada
     }
@@ -129,105 +129,36 @@ class AppData with ChangeNotifier {
   }
 
   void checkAround(int row, int col) {
-    if (row < 0 || row >= tamany || col < 0 || col >= tamany || board[row][col][1] == 's' || board[row][col][0] != '0') {
+    if (row < 0 || row >= tamany || col < 0 || col >= tamany || board[row][col][2] == 's' || board[row][col][0] != '-') {
         return;  // No hagas nada si la casilla ya se reveló o está fuera de los límites o no contiene un '0'
     }
 
-    board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
+    if (board[row][col][1] == '0') {
+      board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
 
-    // Llamar recursivamente a las casillas adyacentes
-    print('checkAround(row - 1, col);');
-    checkAround(row - 1, col);
-    print('checkAround(row + 1, col);');
-    checkAround(row + 1, col);
-    print('checkAround(row, col - 1);');
-    checkAround(row, col - 1);
-    print('checkAround(row, col + 1);');
-    checkAround(row, col + 1);
+      if (!(col+1>=tamany)) {
+        checkAround(row, col + 1);
+      }
+
+      if (!(col-1<0)) {
+        checkAround(row, col - 1);
+      }
+
+      if (!(row+1>=tamany)) {
+        checkAround(row+1, col);
+      }
+
+      if (!(row-1<0)) {
+        checkAround(row-1, col);
+      }
+    }
+    return;
   }
 
 
   // Comprova si el joc ja té un tres en ratlla
-  // No comprova la situació d'empat
   void checkGameWinner() {
-    for (int i = 0; i < 4; i++) {
-      // Comprovar files
-      if (board[i][0] == board[i][1] &&
-          board[i][1] == board[i][2] &&
-          board[i][0] != '-') {
-        gameIsOver = true;
-        gameWinner = board[i][0];
-        return;
-      }
-
-      // Comprovar columnes
-      if (board[0][i] == board[1][i] &&
-          board[1][i] == board[2][i] &&
-          board[0][i] != '-') {
-        gameIsOver = true;
-        gameWinner = board[0][i];
-        return;
-      }
-    }
-
-    // Comprovar diagonal principal
-    if (board[0][0] == board[1][1] &&
-        board[1][1] == board[2][2] &&
-        board[0][0] != '-') {
-      gameIsOver = true;
-      gameWinner = board[0][0];
-      return;
-    }
-
-    // Comprovar diagonal secundària
-    if (board[0][2] == board[1][1] &&
-        board[1][1] == board[2][0] &&
-        board[0][2] != '-') {
-      gameIsOver = true;
-      gameWinner = board[0][2];
-      return;
-    }
-
     // No hi ha guanyador, torna '-'
     gameWinner = '-';
-  }
-
-  // Carrega les imatges per dibuixar-les al Canvas
-  Future<void> loadImages(BuildContext context) async {
-    // Si ja estàn carregades, no cal fer res
-    if (imagesReady) {
-      notifyListeners();
-      return;
-    }
-
-    // Força simular un loading
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    Image tmpPlayer = Image.asset('assets/images/player.png');
-    Image tmpOpponent = Image.asset('assets/images/opponent.png');
-
-    // Carrega les imatges
-    if (context.mounted) {
-      imagePlayer = await convertWidgetToUiImage(tmpPlayer);
-    }
-    if (context.mounted) {
-      imageOpponent = await convertWidgetToUiImage(tmpOpponent);
-    }
-
-    imagesReady = true;
-
-    // Notifica als escoltadors que les imatges estan carregades
-    notifyListeners();
-  }
-
-  // Converteix les imatges al format vàlid pel Canvas
-  Future<ui.Image> convertWidgetToUiImage(Image image) async {
-    final completer = Completer<ui.Image>();
-    image.image.resolve(const ImageConfiguration()).addListener(
-          ImageStreamListener(
-            (info, _) => completer.complete(info.image),
-          ),
-        );
-    return completer.future;
   }
 }

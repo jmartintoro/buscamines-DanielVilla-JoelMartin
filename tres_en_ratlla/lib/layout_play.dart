@@ -47,7 +47,9 @@ class _LayoutPlayState extends State<LayoutPlay> {
     final appData = context.watch<AppData>();
 
     return CupertinoPageScaffold(
+      backgroundColor: appData.nightmode ? Color.fromARGB(255, 59, 59, 59) : CupertinoColors.white,
       navigationBar: CupertinoNavigationBar(
+        backgroundColor: appData.nightmode ? Color.fromARGB(27, 0, 0, 0) : CupertinoColors.white,
         middle: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -56,10 +58,7 @@ class _LayoutPlayState extends State<LayoutPlay> {
               '${appData.bombes - appData.flags}   ',
               style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 255, 0, 0)),
             ),
-            Text(
-              'Partida',
-              style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 0, 0, 0)),
-            ),
+            SizedBox(width: 70,),
             Text(
               '   ${chrono}\'',
               style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 120, 220, 25)),
@@ -67,6 +66,7 @@ class _LayoutPlayState extends State<LayoutPlay> {
           ],
         ),
         leading: CupertinoNavigationBarBackButton(
+          color: appData.nightmode ? CupertinoColors.white : CupertinoColors.activeBlue,
           onPressed: () {
             Navigator.of(context).pop();
           },

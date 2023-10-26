@@ -11,7 +11,6 @@ class WidgetTresRatlla extends StatefulWidget {
 }
 
 class WidgetTresRatllaState extends State<WidgetTresRatlla> {
-  Future<void>? _loadImagesFuture;
 
   // Al iniciar el widget, carrega les imatges
   @override
@@ -19,7 +18,6 @@ class WidgetTresRatllaState extends State<WidgetTresRatlla> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       AppData appData = Provider.of<AppData>(context, listen: false);
-      _loadImagesFuture = appData.loadImages(context);
     });
   }
 
@@ -32,9 +30,16 @@ class WidgetTresRatllaState extends State<WidgetTresRatlla> {
         final int row =
             (details.localPosition.dy / (context.size!.height / appData.tamany)).floor();
         final int col =
-            (details.localPosition.dx / (context.size!.width / appData.tamany)).floor();   ///////////////////////////////////////////////////////////////
-
-        appData.playMove(row, col);
+            (details.localPosition.dx / (context.size!.width / appData.tamany)).floor(); 
+        if (appData.board[row][col][0] != "f") {
+          appData.playMove(row, col);
+        }
+        setState(() {}); // Actualitza la vista
+      },
+      onDoubleTapDown: (TapDownDetails details) {
+        final int row = (details.localPosition.dy  / (context.size!.height / appData.tamany)).floor();
+        final int col = (details.localPosition.dx  / (context.size!.width / appData.tamany)).floor();
+        appData.flagator(row, col);
         setState(() {}); // Actualitza la vista
       },
       child: SizedBox(
@@ -43,49 +48,10 @@ class WidgetTresRatllaState extends State<WidgetTresRatlla> {
             .width, // Ocupa tot l'ample de la pantalla
         height: MediaQuery.of(context).size.height -
             56.0, // Ocupa tota l'altura disponible menys l'altura de l'AppBar
-        child: FutureBuilder(
-          // Segons si les imatges estan disponibles mostra un progrés o el joc
-          future: _loadImagesFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState != ConnectionState.done) {
-              return const CupertinoActivityIndicator();
-            } else {
-              return GestureDetector(
-                onTapUp: (TapUpDetails details) {
-                  final int row =
-                      (details.localPosition.dy / (context.size!.height / appData.tamany)) ///////////////////////////////////////////////////
-                          .floor();
-                  final int col =
-                      (details.localPosition.dx / (context.size!.width / appData.tamany))
-                          .floor();
-                  if (appData.board[row][col][0] != "f") {
-                    appData.playMove(row, col);
-                  }
-                  setState(() {}); // Actualitza la vista
-                },
-                onDoubleTapDown: (TapDownDetails details) {
-
-                  final int row = (details.localPosition.dy  / (context.size!.height / appData.tamany)).floor();
-                  final int col = (details.localPosition.dx  / (context.size!.width / appData.tamany)).floor();
-
-                  appData.flagator(row, col);
-                  setState(() {}); // Actualitza la vista
-                },
-                child: SizedBox(
-                  width: MediaQuery.of(context)
-                      .size
-                      .width, // Ocupa tot l'ample de la pantalla
-                  height: MediaQuery.of(context).size.height -
-                      56.0, // Ocupa tota l'altura disponible menys l'altura de l'AppBar
-                  child: CustomPaint(
-                    painter: WidgetTresRatllaPainter(appData),
-                  ),
-                ),
-              );
-            }
-          },
+        child: CustomPaint(
+          painter: WidgetTresRatllaPainter(appData),
         ),
-      ),
+      )
     );
   }
 }

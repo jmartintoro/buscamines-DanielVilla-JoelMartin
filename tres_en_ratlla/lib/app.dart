@@ -19,9 +19,9 @@ class AppState extends State<App> {
     return CupertinoApp(
       debugShowCheckedModeBanner: false,
       theme: const CupertinoThemeData(brightness: Brightness.light),
-      home: const Lobby(),
+      home: Lobby(),
       routes: {
-        'intro': (context) => const Lobby(),
+        'intro': (context) => Lobby(),
         'play': (context) => const LayoutPlay(),
       },
     );

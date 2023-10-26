@@ -1,21 +1,36 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'app_data.dart';
 
-class Lobby extends StatelessWidget {
-  const Lobby({super.key});
+class Lobby extends StatefulWidget {
+  @override
+  _MyWidgetState createState() => _MyWidgetState();
+}
+
+class _MyWidgetState extends State<Lobby> {
 
   @override
   Widget build(BuildContext context) {
     AppData appData = Provider.of<AppData>(context);
+    
     return CupertinoPageScaffold(
-      backgroundColor: const Color.fromARGB(255, 19, 19, 19),
+      backgroundColor: appData.nightmode ? const Color.fromARGB(255, 19, 19, 19) : const Color.fromARGB(255, 234, 234, 234),
       navigationBar: CupertinoNavigationBar(
-        backgroundColor: Color.fromARGB(14, 255, 255, 255),
+        backgroundColor: appData.nightmode ? const Color.fromARGB(14, 255, 255, 255) : CupertinoColors.white,
+        leading: CupertinoButton(
+          padding: EdgeInsets.zero,
+          child: Icon(appData.nightmode ? CupertinoIcons.moon_stars_fill : CupertinoIcons.moon, size: 28, color: appData.nightmode ? CupertinoColors.white : CupertinoColors.activeBlue,),
+          onPressed: () {
+            setState(() {
+              appData.nightmode = !appData.nightmode;
+            });
+          },
+        ),
         middle: Text(
           'Buscaminas',
-          style: TextStyle(fontSize: 25, color: CupertinoColors.white),
+          style: TextStyle(fontSize: 25, color: appData.nightmode ? CupertinoColors.white : CupertinoColors.black),
         ),
         trailing: GestureDetector(
           onTap: () {
@@ -23,14 +38,32 @@ class Lobby extends StatelessWidget {
           },
           child: CupertinoButton(
             padding: EdgeInsets.zero,
-            child: Icon(CupertinoIcons.gear_alt, size: 28, color: CupertinoColors.white),
+            child: Icon(CupertinoIcons.gear_alt, size: 28, color: appData.nightmode ? CupertinoColors.white : CupertinoColors.activeBlue),
             onPressed: () {
               _options(context);
             },
           ),
         ),
       ),
-      child: _centerLobby(context),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _centerLobby(context),
+          SizedBox(height: 50),
+          Container(
+            height: 10,
+            child: Text(
+              'Daniel Villa & Joel Martín',
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w100,
+                color: appData.nightmode ? CupertinoColors.white.withOpacity(0.7) : CupertinoColors.black.withOpacity(0.7)
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 
@@ -41,7 +74,7 @@ class Lobby extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SvgPicture.asset("assets/images/mine_icon.svg", height: 100, width: 100, color: CupertinoColors.white,),
+        SvgPicture.asset("assets/images/mine_icon.svg", height: 100, width: 100, color: appData.nightmode ? CupertinoColors.white : CupertinoColors.black,),
         SizedBox(height: 25),
         GestureDetector(
           onTap: () {
@@ -53,20 +86,19 @@ class Lobby extends StatelessWidget {
             alignment: Alignment.center,
             width: 100,
             height: 50,
+            decoration: BoxDecoration(
+                color: appData.nightmode ? CupertinoColors.activeBlue : CupertinoColors.activeGreen,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                      color: appData.nightmode ? CupertinoColors.activeBlue.withOpacity(0.51) : CupertinoColors.activeGreen.withOpacity(0.51),
+                      blurRadius: 10,
+                      spreadRadius: 0.0)
+                ]),
             child: Text(
               'START',
               style: TextStyle(color: CupertinoColors.white),
             ),
-            decoration: BoxDecoration(
-                color: CupertinoColors.activeBlue,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                      color:
-                          Color.fromARGB(255, 26, 146, 155).withOpacity(0.51),
-                      blurRadius: 10,
-                      spreadRadius: 0.0)
-                ]),
           ),
         )
       ],
