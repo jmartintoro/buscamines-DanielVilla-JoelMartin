@@ -1,4 +1,4 @@
-import 'package:cupertino_base/lobby.dart';
+import 'package:buscaminas/lobby.dart';
 import 'package:flutter/cupertino.dart';
 import 'layout_play.dart';
 

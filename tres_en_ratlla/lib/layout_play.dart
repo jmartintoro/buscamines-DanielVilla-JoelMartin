@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:cupertino_base/app_data.dart';
-import 'package:cupertino_base/widget_tresratlla.dart';
+import 'package:buscaminas/app_data.dart';
+import 'package:buscaminas/widget_tresratlla.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 

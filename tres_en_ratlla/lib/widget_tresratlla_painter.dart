@@ -30,11 +30,12 @@ class WidgetTresRatllaPainter extends CustomPainter {
   // Dibuia una creu centrada a una casella del taulell
   void drawNumber(Canvas canvas, double x, double y, String number, Color color,
       double strokeWidth) {
+
     TextSpan span = TextSpan(
       text: number.toString(),
       style: TextStyle(
         color: color,
-        fontSize: 50.0, // Tamaño del número
+        fontSize: 40.0,        // Tamaño del número
         fontWeight: FontWeight.bold,
       ),
     );
@@ -46,7 +47,7 @@ class WidgetTresRatllaPainter extends CustomPainter {
     );
 
     tp.layout();
-    tp.paint(canvas, Offset(x - tp.width/2, y - tp.height));
+    tp.paint(canvas, Offset(x - tp.width/2, y - tp.height-5));
   }
 
   // Dibuixa un cercle centrat a una casella del taulell

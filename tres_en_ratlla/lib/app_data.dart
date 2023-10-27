@@ -20,7 +20,7 @@ class AppData with ChangeNotifier {
     checkBombs();
     flags = 0;
     gameWinner = false;
-    printBoard(); // Agregamos esta función para imprimir el tablero
+    //printBoard(); // Agregamos esta función para imprimir el tablero
     notifyListeners(); // Notificar cambios después de resetear el juego
   }
 
