@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'dart:ui' as ui;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart'; // per a 'CustomPainter'
+import 'package:flutter_svg/flutter_svg.dart';
 import 'app_data.dart';
 
 // S'encarrega del dibuix personalitzat del joc
@@ -29,13 +31,13 @@ class WidgetTresRatllaPainter extends CustomPainter {
 
   // Dibuia una creu centrada a una casella del taulell
   void drawNumber(Canvas canvas, double x, double y, String number, Color color,
-      double strokeWidth) {
-
+      double strokeWidth, Size s) {
+    
     TextSpan span = TextSpan(
       text: number.toString(),
       style: TextStyle(
         color: color,
-        fontSize: 40.0,        // Tamaño del número
+        fontSize: s.height/15,        // Tamaño del número
         fontWeight: FontWeight.bold,
       ),
     );
@@ -111,7 +113,7 @@ class WidgetTresRatllaPainter extends CustomPainter {
           double cX = x0 + (x1 - x0) / 2;
           double cY = y0 + (y1 - y0);
 
-          drawNumber(canvas, cX, cY, appData.board[i][j][1], color, 5.0);
+          drawNumber(canvas, cX, cY, appData.board[i][j][1], color, 5.0, size);
         } else if (appData.board[i][j][0] != '1' &&
             appData.board[i][j][1] == 'b' && appData.board[i][j][2] != '-') {
           // Dibuixar bomba

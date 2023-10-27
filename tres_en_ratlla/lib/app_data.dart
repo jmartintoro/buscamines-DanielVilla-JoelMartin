@@ -14,9 +14,12 @@ class AppData with ChangeNotifier {
   bool gameWinner = false;
 
   void resetGame() {
-    board.clear();                                                              //1r '-': hay (f) o no (-) puesta bandera
-    board = List.generate(tamany, (_) => List.filled(tamany, '---'));           //2n '-': bomba (b) o numero de bombas alrededor (numero)
-    randomBombs();                                                              //3r '-': destapado (s) o no (-)
+    board.clear(); //1r '-': hay (f) o no (-) puesta bandera
+    board = List.generate(
+        tamany,
+        (_) => List.filled(tamany,
+            '---')); //2n '-': bomba (b) o numero de bombas alrededor (numero)
+    randomBombs(); //3r '-': destapado (s) o no (-)
     checkBombs();
     flags = 0;
     gameWinner = false;
@@ -33,7 +36,8 @@ class AppData with ChangeNotifier {
         fila = r.nextInt(tamany);
         casilla = r.nextInt(tamany);
       } while (board[fila][casilla][1] == 'b');
-      board[fila][casilla] ='${board[fila][casilla][0]}b${board[fila][casilla][2]}';
+      board[fila][casilla] =
+          '${board[fila][casilla][0]}b${board[fila][casilla][2]}';
     }
     notifyListeners(); // Notificar cambios después de colocar bombas
   }
@@ -59,7 +63,8 @@ class AppData with ChangeNotifier {
               }
             }
           }
-          board[fila][casilla] = '${board[fila][casilla][0]}$numBombes${board[fila][casilla][2]}';
+          board[fila][casilla] =
+              '${board[fila][casilla][0]}$numBombes${board[fila][casilla][2]}';
         }
       }
     }
@@ -76,23 +81,23 @@ class AppData with ChangeNotifier {
   void playMove(int row, int col) {
     if (board[row][col][2] == '-') {
       board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
-      if (board[row][col][1] == 'b'){ 
+      if (board[row][col][1] == 'b') {
         showBombs();
         gameIsOver = true;
       }
-      if (board[row][col][1] != 'b'){
-        checkAround(row, col+1);  //Derecha
-        checkAround(row, col-1);  //Izquierda
-        checkAround(row-1, col);  //Arriba
-        checkAround(row-1, col+1);  //Arriba Derecha
-        checkAround(row-1, col-1);  //Arriba Izquierda
-        checkAround(row+1, col);  //Abajo
-        checkAround(row+1, col+1);  //Abajo Derecha
-        checkAround(row+1, col-1);  //Abajo Izquierda
+      if (board[row][col][1] != 'b' && board[row][col][1] == '0') {
+        checkAround(row, col + 1, 1); //Derecha
+        checkAround(row, col - 1, 1); //Izquierda
+        checkAround(row - 1, col, 1); //Arriba
+        checkAround(row - 1, col + 1, 1); //Arriba Derecha
+        checkAround(row - 1, col - 1, 1); //Arriba Izquierda
+        checkAround(row + 1, col, 1); //Abajo
+        checkAround(row + 1, col + 1, 1); //Abajo Derecha
+        checkAround(row + 1, col - 1, 1); //Abajo Izquierda
 
         checkGameWinner(); // Comprobar que no queda cap casella sense bomba per descubrir
-      } 
-      
+      }
+
       notifyListeners(); // Notificar cambios después de realizar una jugada
     }
   }
@@ -101,7 +106,8 @@ class AppData with ChangeNotifier {
     for (int fila = 0; fila < tamany; fila++) {
       for (int casilla = 0; casilla < tamany; casilla++) {
         if (board[fila][casilla][1] == 'b') {
-          board[fila][casilla] = '${board[fila][casilla][0]}${board[fila][casilla][1]}s';
+          board[fila][casilla] =
+              '${board[fila][casilla][0]}${board[fila][casilla][1]}s';
         } else if (board[fila][casilla][2] != 's') {
           board[fila][casilla] = '${board[fila][casilla][0]} s';
         }
@@ -127,45 +133,52 @@ class AppData with ChangeNotifier {
     notifyListeners();
   }
 
-  void checkAround(int row, int col) {
-    if (row < 0 || row >= tamany || col < 0 || col >= tamany || board[row][col][2] == 's' || board[row][col][0] != '-') {
-        return;  // No hagas nada si la casilla ya se reveló o está fuera de los límites o no contiene un '0'
+  void checkAround(int row, int col, int numAnterior) {
+    if (row < 0 ||
+        row >= tamany ||
+        col < 0 ||
+        col >= tamany ||
+        board[row][col][2] == 's' ||
+        board[row][col][0] != '-') {
+      return; // No hagas nada si la casilla ya se reveló o está fuera de los límites o no contiene un '0'
     }
 
     if (board[row][col][1] == '0') {
       board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
 
-      if (!(col+1>=tamany)) {
-        checkAround(row, col + 1);
+      if (!(col + 1 >= tamany)) {
+        checkAround(row, col + 1, 0);
       }
 
-      if (!(col-1<0)) {
-        checkAround(row, col - 1);
+      if (!(col - 1 < 0)) {
+        checkAround(row, col - 1, 0);
       }
 
-      if (!(row+1>=tamany)) {
-        checkAround(row+1, col);
+      if (!(row + 1 >= tamany)) {
+        checkAround(row + 1, col, 0);
       }
 
-      if (!(row-1<0)) {
-        checkAround(row-1, col);
+      if (!(row - 1 < 0)) {
+        checkAround(row - 1, col, 0);
       }
+    } else if (board[row][col][1] != 'b' && numAnterior == 0) {
+      board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
+      return;
     }
     return;
   }
 
-
   // Comprova si el jugador a obert totes les caselles no bomba
   void checkGameWinner() {
-    int totalCaselles = tamany*tamany-bombes;
+    int totalCaselles = tamany * tamany - bombes;
     int contadorCaselles = 0;
     for (int fila = 0; fila < tamany; fila++) {
       for (int casilla = 0; casilla < tamany; casilla++) {
-        if (board[fila][casilla][1] != 'b' && board[fila][casilla][2] == 's'){
-          contadorCaselles +=1;
+        if (board[fila][casilla][1] != 'b' && board[fila][casilla][2] == 's') {
+          contadorCaselles += 1;
         }
       }
-    } 
+    }
     if (contadorCaselles == totalCaselles) {
       gameWinner = true;
     }

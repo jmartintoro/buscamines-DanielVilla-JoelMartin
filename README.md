@@ -1,6 +1,8 @@
-# Flutter, Tres en ratlla
+# Flutter, Buscamines
 
-Aquest projecte és un exemple de CustomPainter en Flutter
+Buscamines en Flutter
+Fet per Daniel Villa i Joel Martín
+
 
 ## Per configurar un nou sistema
 
