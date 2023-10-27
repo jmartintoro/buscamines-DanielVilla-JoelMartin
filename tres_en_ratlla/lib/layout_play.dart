@@ -23,7 +23,7 @@ class _LayoutPlayState extends State<LayoutPlay> {
 
     // Iniciar el cronómetro
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      if (!appData.gameIsOver) {
+      if (!appData.gameIsOver && !appData.gameWinner) {
         // Incrementar el tiempo en un segundo
         int seconds = int.parse(chrono) + 1;
         setState(() {

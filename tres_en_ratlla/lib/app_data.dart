@@ -1,8 +1,5 @@
-import 'dart:async';
 import 'dart:math';
-import 'package:cupertino_base/widget_tresratlla_painter.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class AppData with ChangeNotifier {
   int tamany = 9; //o 15
@@ -14,13 +11,15 @@ class AppData with ChangeNotifier {
 
   List<List<String>> board = [];
   bool gameIsOver = false;
-  String gameWinner = '-';
+  bool gameWinner = false;
 
   void resetGame() {
     board.clear();                                                              //1r '-': hay (f) o no (-) puesta bandera
     board = List.generate(tamany, (_) => List.filled(tamany, '---'));           //2n '-': bomba (b) o numero de bombas alrededor (numero)
     randomBombs();                                                              //3r '-': destapado (s) o no (-)
     checkBombs();
+    flags = 0;
+    gameWinner = false;
     printBoard(); // Agregamos esta función para imprimir el tablero
     notifyListeners(); // Notificar cambios después de resetear el juego
   }
@@ -77,10 +76,8 @@ class AppData with ChangeNotifier {
   void playMove(int row, int col) {
     if (board[row][col][2] == '-') {
       board[row][col] = '${board[row][col][0]}${board[row][col][1]}s';
-      if (board[row][col][1] == 'b'){
-        // funcion que destape todas las bombas 
+      if (board[row][col][1] == 'b'){ 
         showBombs();
-        // llamar funcion game over
         gameIsOver = true;
       }
       if (board[row][col][1] != 'b'){
@@ -92,8 +89,10 @@ class AppData with ChangeNotifier {
         checkAround(row+1, col);  //Abajo
         checkAround(row+1, col+1);  //Abajo Derecha
         checkAround(row+1, col-1);  //Abajo Izquierda
+
+        checkGameWinner(); // Comprobar que no queda cap casella sense bomba per descubrir
       } 
-      //checkGameWinner();
+      
       notifyListeners(); // Notificar cambios después de realizar una jugada
     }
   }
@@ -156,9 +155,19 @@ class AppData with ChangeNotifier {
   }
 
 
-  // Comprova si el joc ja té un tres en ratlla
+  // Comprova si el jugador a obert totes les caselles no bomba
   void checkGameWinner() {
-    // No hi ha guanyador, torna '-'
-    gameWinner = '-';
+    int totalCaselles = tamany*tamany-bombes;
+    int contadorCaselles = 0;
+    for (int fila = 0; fila < tamany; fila++) {
+      for (int casilla = 0; casilla < tamany; casilla++) {
+        if (board[fila][casilla][1] != 'b' && board[fila][casilla][2] == 's'){
+          contadorCaselles +=1;
+        }
+      }
+    } 
+    if (contadorCaselles == totalCaselles) {
+      gameWinner = true;
+    }
   }
 }

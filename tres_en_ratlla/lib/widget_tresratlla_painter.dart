@@ -142,9 +142,15 @@ class WidgetTresRatllaPainter extends CustomPainter {
   }
 
   // Dibuixa el missatge de joc acabat
-  void drawGameOver(Canvas canvas, Size size) {
+  void drawMessage(Canvas canvas, Size size) {
     
-    String message = "Has EXPLOTAT!";
+    String message = '';
+    if (appData.gameIsOver) {
+      message = 'Has EXPLOTAT!';
+    } else {
+      message = 'Has GUANYAT!'; 
+    }
+    
 
     TextStyle textStyle = TextStyle(
       color: appData.nightmode ? Colors.white : Colors.black,
@@ -184,8 +190,8 @@ class WidgetTresRatllaPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     drawBoardLines(canvas, size);
     drawBoardStatus(canvas, size);
-    if (appData.gameIsOver) {
-      drawGameOver(canvas, size);
+    if (appData.gameIsOver || appData.gameWinner) {
+      drawMessage(canvas, size);
     }
   }
 
