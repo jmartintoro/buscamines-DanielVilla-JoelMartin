@@ -37,7 +37,7 @@ class WidgetTresRatllaPainter extends CustomPainter {
       text: number.toString(),
       style: TextStyle(
         color: color,
-        fontSize: s.height/15,        // Tamaño del número
+        fontSize: s.height/25,        // Tamaño del número
         fontWeight: FontWeight.bold,
       ),
     );

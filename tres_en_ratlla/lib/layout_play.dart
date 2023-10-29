@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:buscaminas/app_data.dart';
 import 'package:buscaminas/widget_tresratlla.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class LayoutPlay extends StatefulWidget {
@@ -54,14 +55,24 @@ class _LayoutPlayState extends State<LayoutPlay> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              '${appData.bombes - appData.flags}   ',
-              style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 255, 0, 0)),
+            Row(
+              children: [
+                Icon(CupertinoIcons.flag_fill, color: Color.fromARGB(255, 181, 0, 0),),
+                Text(
+                  ': ${appData.bombes - appData.flags}   ',
+                  style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 255, 0, 0)),
+                ),
+              ],
             ),
             SizedBox(width: 70,),
-            Text(
-              '   ${chrono}\'',
-              style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 120, 220, 25)),
+            Row(
+              children: [
+                SvgPicture.asset('assets/images/clock.svg'),
+                Text(
+                  ':   ${chrono}\'',
+                  style: TextStyle(fontSize: 25, color: Color.fromARGB(255, 120, 220, 25)),
+                ),
+              ],
             ),
           ],
         ),

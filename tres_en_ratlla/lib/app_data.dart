@@ -94,10 +94,9 @@ class AppData with ChangeNotifier {
         checkAround(row + 1, col, 1); //Abajo
         checkAround(row + 1, col + 1, 1); //Abajo Derecha
         checkAround(row + 1, col - 1, 1); //Abajo Izquierda
-
-        checkGameWinner(); // Comprobar que no queda cap casella sense bomba per descubrir
       }
 
+      checkGameWinner(); // Comprobar que no queda cap casella sense bomba per descubrir
       notifyListeners(); // Notificar cambios después de realizar una jugada
     }
   }
